@@ -216,6 +216,8 @@ obj-$(CONFIG_CMD_ECC) += ecc.o
 obj-$(CONFIG_CMD_RZG2L_ECC) += rzg2l_ecc.o
 obj-$(CONFIG_CMD_EVK) += evk.o
 
+# Load env file from ext4 command
+obj-y += load_env_ext4.o
 
 obj-$(CONFIG_CMD_BCM_EXT_UTILS) += broadcom/
 
