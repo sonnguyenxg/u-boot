@@ -948,6 +948,7 @@ static const init_fnc_t init_sequence_f[] = {
 
 void board_init_f(ulong boot_flags)
 {
+	printf("board_init_f: 01\n");
 	gd->flags = boot_flags;
 	gd->have_console = 0;
 
@@ -990,6 +991,7 @@ static const init_fnc_t init_sequence_f_r[] = {
 
 void board_init_f_r(void)
 {
+	printf("board_init_f: 02\n");
 	if (initcall_run_list(init_sequence_f_r))
 		hang();
 

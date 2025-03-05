@@ -487,6 +487,7 @@ static int spl_common_init(bool setup_malloc)
 	}
 #endif
 	if (CONFIG_IS_ENABLED(OF_CONTROL) && !CONFIG_IS_ENABLED(OF_PLATDATA)) {
+		printf("fdtdec_setup - 00\n");
 		ret = fdtdec_setup();
 		if (ret) {
 			debug("fdtdec_setup() returned error %d\n", ret);

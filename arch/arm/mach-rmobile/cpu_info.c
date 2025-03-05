@@ -123,6 +123,7 @@ int arch_misc_init(void)
 
 int print_cpuinfo(void)
 {
+	printf("print_cpuinfo - 01\n");
 	int i = rmobile_cpuinfo_idx();
 
 	/* Specific cases for RZ/G2M */

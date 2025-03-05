@@ -15,6 +15,17 @@ int __weak checkboard(void)
 	return 0;
 }
 
+// #if defined(CONFIG_DTB_RESELECT)
+int __weak embedded_dtb_select(void)
+{
+	printf("embedded_dtb_select\n");
+	// do_board_detect();
+	fdtdec_setup();
+
+	return 0;
+}
+// #endif
+
 /*
  * Check sysinfo for board information. Failing that if the root node of the DTB
  * has a "model" property, show it.
@@ -23,6 +34,8 @@ int __weak checkboard(void)
  */
 int __weak show_board_info(void)
 {
+	embedded_dtb_select();
+
 	if (IS_ENABLED(CONFIG_OF_CONTROL)) {
 		struct udevice *dev;
 		const char *model;
@@ -48,8 +61,12 @@ int __weak show_board_info(void)
 		else
 			model = str;
 
-		if (model)
-			printf("Model: %s\n", model);
+		if (model) {
+			printf("Model 01: %s\n", model);
+			printf("Model 02: %s\n", model);
+			printf("Model 03: %s\n", model);
+		}
+			
 	}
 
 	return checkboard();

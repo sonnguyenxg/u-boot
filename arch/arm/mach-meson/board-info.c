@@ -169,6 +169,7 @@ static unsigned int get_socinfo(void)
 
 int show_board_info(void)
 {
+	printf("U-Boot: 'board_info'\n");
 	unsigned int socinfo;
 
 	/* print board information */

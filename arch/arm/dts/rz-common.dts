@@ -14,7 +14,7 @@
 #include <configs/rzpi.h>
 
 / {
-	model = "RZpi";
+	model = "RZ-common";
 	compatible = "renesas,r9a07g044l", "renesas,rzg2l";
 
 	aliases	{

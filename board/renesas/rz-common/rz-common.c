@@ -66,6 +66,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 void s_init(void)
 {
+	printf("s_init\n");
 	/* can go in board_eht_init() once enabled */
 	*(volatile u32 *)(ETH_CH0) = (*(volatile u32 *)(ETH_CH0) & 0xFFFFFFFC) | ETH_PVDD_1800;
 	*(volatile u32 *)(ETH_CH1) = (*(volatile u32 *)(ETH_CH1) & 0xFFFFFFFC) | ETH_PVDD_1800;
@@ -85,20 +86,30 @@ void s_init(void)
 
 int board_early_init_f(void)
 {
-
+	printf("board_early_init_f\n");
 	return 0;
 }
 
 #define CONFIG_SYS_SH_SDHI0_BASE  0x11C00000
 #define CONFIG_SYS_SH_SDHI1_BASE  0x11C10000
 
+#if defined(CONFIG_DTB_RESELECT)
+int embedded_dtb_select(void)
+{
+	printf("embedded_dtb_select\n");
+	return 0;
+}
+#endif
+
 int board_mmc_init(struct bd_info *bis)
 {
+	printf("board_mmc_init\n");
 	return sh_sdhi_init(CONFIG_SYS_SH_SDHI0_BASE, 0, SH_SDHI_QUIRK_64BIT_BUF);
 }
 
 int board_init(void)
 {
+	printf("board_init\n");
 	/* adress of boot parameters */
 	gd->bd->bi_boot_params = CONFIG_SYS_TEXT_BASE + 0x50000;
 
@@ -107,10 +118,12 @@ int board_init(void)
 
 void reset_cpu(void)
 {
+	printf("reset_cpu\n");
 }
 
 static void configure_gpy111_phys(void)
 {
+	printf("configure_gpy111_phys\n");
 	static const unsigned char addrs[] = { 1, 4 };
 	struct list_head *entry;
 	struct mii_dev *dev;
@@ -149,6 +162,7 @@ static void configure_gpy111_phys(void)
 /* Enable the 32KHz clock generator which the Bluetooth/Wi-Fi module needs */
 static void enable_32khz_clock(void)
 {
+	printf("enable_32khz_clock\n");
 	static const uchar enable = 0x40;
 	struct udevice *bus, *chip;
 
@@ -162,6 +176,7 @@ static void enable_32khz_clock(void)
 
 static void setup_pins(void)
 {
+	printf("setup_pins\n");
 	volatile u8  *prt = (volatile u8  *)PFC_BASE;
 
 	/* Set port 6_0 drive ability to maximum, 12mA. */
@@ -174,6 +189,7 @@ static void setup_pins(void)
 
 // Read board ID from EEPROM or QSPI Flash
 int read_board_rz_id(){
+	printf("read_board_rz_id\n");
 	return 2;
 }
 
@@ -184,6 +200,7 @@ int read_board_rz_id(){
 // 730152        0xB2428         device tree image (dtb)
 // 758824        0xB9428         device tree image (dtb)
 int rz_select_dtb(void){
+	printf("rz_select_dtb\n");
 	int board_id = read_board_rz_id();
 	printf("Board initialization started.\n");
 	printf("Board ID detected: %d\n", board_id);
@@ -206,6 +223,7 @@ int rz_select_dtb(void){
 
 int board_late_init(void)
 {
+	printf("board_late_init\n");
 	uchar enetaddrs[ETH_ALEN * 2];
 	struct udevice *bus, *chip;
 
@@ -230,6 +248,7 @@ int board_late_init(void)
 
 int last_stage_init(void)
 {
+	printf("last_stage_init\n");
 	configure_gpy111_phys();
 	enable_32khz_clock();
 
@@ -246,6 +265,7 @@ static int do_set_mac_addresses
  char *const     argv[]
 )
 {
+	printf("do_set_mac_addresses\n");
 	uchar           enetaddrs[ETH_ALEN * 2];
 	struct udevice *bus, *chip;
 

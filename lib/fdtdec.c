@@ -1259,6 +1259,7 @@ static int uncompress_blob(const void *src, ulong sz_src, void **dstp)
  */
 __weak void *board_fdt_blob_setup(void)
 {
+	printf("WARNING: board_fdt_blob_setup not implemented\n");
 	void *fdt_blob = NULL;
 #ifdef CONFIG_SPL_BUILD
 	/* FDT is at end of BSS unless it is in a different memory region */
@@ -1560,30 +1561,40 @@ __weak int fdtdec_board_setup(const void *fdt_blob)
 
 int fdtdec_setup(void)
 {
+	printf("fdtdec_setup - 03\n");
 	int ret;
 #if CONFIG_IS_ENABLED(OF_CONTROL)
 # if CONFIG_IS_ENABLED(MULTI_DTB_FIT)
+	printf("fdtdec_setup - 03-1\n");
 	void *fdt_blob;
 # endif
 # ifdef CONFIG_OF_EMBED
+printf("fdtdec_setup - 03-2\n");
 	/* Get a pointer to the FDT */
 #  ifdef CONFIG_SPL_BUILD
+printf("fdtdec_setup - 03-3\n");
 	gd->fdt_blob = __dtb_dt_spl_begin;
 #  else
+printf("fdtdec_setup - 03-4\n");
 	gd->fdt_blob = __dtb_dt_begin;
 #  endif
 # elif defined(CONFIG_OF_BOARD) || defined(CONFIG_OF_SEPARATE)
 	/* Allow the board to override the fdt address. */
+	printf("fdtdec_setup - 03-5\n");
 	gd->fdt_blob = board_fdt_blob_setup();
 # elif defined(CONFIG_OF_HOSTFILE)
+printf("fdtdec_setup - 03-6\n");
 	if (sandbox_read_fdt_from_file()) {
+		printf("fdtdec_setup - 03-7\n");
 		puts("Failed to read control FDT\n");
 		return -1;
 	}
 # elif defined(CONFIG_OF_PRIOR_STAGE)
+printf("fdtdec_setup - 03-8\n");
 	gd->fdt_blob = (void *)(uintptr_t)prior_stage_fdt_address;
 # endif
 # ifndef CONFIG_SPL_BUILD
+	printf("fdtdec_setup - 03-9\n");
 	/* Allow the early environment to override the fdt address */
 	gd->fdt_blob = map_sysmem
 		(env_get_ulong("fdtcontroladdr", 16,
@@ -1597,6 +1608,7 @@ int fdtdec_setup(void)
 	 * is. So let us set the maximum input size arbitrarily high. 16MB
 	 * ought to be more than enough for packed DTBs.
 	 */
+	printf("fdtdec_setup - 03-10\n");
 	if (uncompress_blob(gd->fdt_blob, 0x1000000, &fdt_blob) == 0)
 		gd->fdt_blob = fdt_blob;
 
@@ -1604,18 +1616,21 @@ int fdtdec_setup(void)
 	 * Check if blob is a FIT images containings DTBs.
 	 * If so, pick the most relevant
 	 */
+	printf("fdtdec_setup - 03-11\n");
 	fdt_blob = locate_dtb_in_fit(gd->fdt_blob);
 	if (fdt_blob) {
+		printf("fdtdec_setup - 03-12\n");
 		gd->multi_dtb_fit = gd->fdt_blob;
 		gd->fdt_blob = fdt_blob;
 	}
 
 # endif
 #endif
-
+	printf("fdtdec_setup - 03-13\n");
 	ret = fdtdec_prepare_fdt();
 	if (!ret)
 		ret = fdtdec_board_setup(gd->fdt_blob);
+		printf("fdtdec_setup - 03-14\n");
 	return ret;
 }
 

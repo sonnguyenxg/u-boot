@@ -549,6 +549,7 @@ bool __maybe_unused __weak board_detection(void)
 
 int embedded_dtb_select(void)
 {
+	printf("Embedded DTB selection\n");
 	if (board_detection()) {
 		char *board_local_name;
 
