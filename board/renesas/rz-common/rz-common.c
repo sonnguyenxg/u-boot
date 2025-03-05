@@ -21,9 +21,24 @@
 #include <i2c.h>
 #include <mmc.h>
 #include <command.h>
+#include <env.h>
+#include <fdtdec.h>
+#include <linux/libfdt.h>
+#include <asm/global_data.h>
+
+#include <common.h>
+#include <dm.h>
+#include <errno.h>
+#include <hang.h>
+#include <log.h>
+#include <time.h>
+#include <asm/global_data.h>
+#include <dm/device-internal.h>
+#include <dm/lists.h>
+
 
 #if !defined(CONFIG_TARGET_RZ_COMMON)
-#  error This platform support file is for the RZG2L-SBC board (Raspberry-Pi-like board).
+#  error This platform support file is for the RZ-common board.
 #endif
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -157,10 +172,44 @@ static void setup_pins(void)
 	prt[PFC_P10]  = (prt[PFC_P10]  & 0xFE) | 0x01; /* Set high. */
 }
 
+// Read board ID from EEPROM or QSPI Flash
+int read_board_rz_id(){
+	return 2;
+}
+
+// DECIMAL       HEXADECIMAL     DESCRIPTION
+// --------------------------------------------------------------------------------
+// 3136          0xC40           CRC32 polynomial table, little endian
+// 701432        0xAB3F8         device tree image (dtb)
+// 730152        0xB2428         device tree image (dtb)
+// 758824        0xB9428         device tree image (dtb)
+int rz_select_dtb(void){
+	int board_id = read_board_rz_id();
+	printf("Board initialization started.\n");
+	printf("Board ID detected: %d\n", board_id);
+
+    if (board_id == 0) {
+		gd->fdt_blob = (void *)0xAB3F8;
+        // env_set("fdtcontroladdr", "0xAB3F8");  // DTB 1: rz-common.dtb
+		env_set("fdtfile", "rz-common.dtb");
+    } else if (board_id == 1) {
+		gd->fdt_blob = (void *)0xB2428;
+        // env_set("fdtcontroladdr", "0xB2428");  // DTB 2: smarc-rzg2l.dtb
+		env_set("fdtfile", "smarc-rzg2l.dtb");
+    } else {
+		gd->fdt_blob = (void *)0xB9428;
+        // env_set("fdtcontroladdr", "0xB9428");  // DTB 3: smarc-rzv2l.dtb 
+		env_set("fdtfile", "smarc-rzv2l.dtb");
+    }
+	return 0;
+}
+
 int board_late_init(void)
 {
 	uchar enetaddrs[ETH_ALEN * 2];
 	struct udevice *bus, *chip;
+
+	rz_select_dtb();
 
 	if (!uclass_get_device_by_seq(UCLASS_I2C, 0, &bus) &&
 	    !i2c_get_chip(bus, 0x54, 1, &chip) &&
